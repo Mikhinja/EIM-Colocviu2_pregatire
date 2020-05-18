@@ -22,14 +22,25 @@ import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 
 public class PracticalTest02MainActivity extends AppCompatActivity {
 
-    private DisplayResultsButtonClickListener displayResultButtonClickListener = new DisplayResultsButtonClickListener();
-    private class DisplayResultsButtonClickListener implements View.OnClickListener {
+    private ServerThread serverThread;
+
+    private StartServerButtonClickListener startServerButtonClickListener = new StartServerButtonClickListener();
+    private class StartServerButtonClickListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
             String strPort = etPort.getText().toString();
             int port = Integer.parseInt(strPort);
-            BitcoinAsyncTask task = new BitcoinAsyncTask(port, strCurrency);
-            task.execute("");
+            serverThread = new ServerThread(port);
+            serverThread.start();
+        }
+    }
+
+    private DisplayResultsButtonClickListener displayResultButtonClickListener = new DisplayResultsButtonClickListener();
+    private class DisplayResultsButtonClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            double value = serverThread.GetValueInCurrency(strCurrency);
+            tvResult.setText(strCurrency + ": " + value);
         }
     }
 
@@ -62,9 +73,12 @@ public class PracticalTest02MainActivity extends AppCompatActivity {
 
         btnStartServer = (Button)findViewById(R.id.button1);
         if (btnStartServer != null) {
-            btnStartServer.setOnClickListener(displayResultButtonClickListener);
+            btnStartServer.setOnClickListener(startServerButtonClickListener);
         }
         btnGetResult = (Button)findViewById(R.id.buttonResults);
+        if (btnGetResult != null) {
+            btnGetResult.setOnClickListener(displayResultButtonClickListener);
+        }
 
         radioGroup = (RadioGroup)findViewById((R.id.radioGroup));
         radioGroup.setOnCheckedChangeListener(radioButtonGroupListener);

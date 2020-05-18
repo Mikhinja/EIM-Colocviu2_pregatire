@@ -15,10 +15,10 @@ import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 
 public class BitcoinAsyncTask extends AsyncTask<String, Void, String> {
     int port;
-    String currency;
-    public BitcoinAsyncTask(int port, String currency) {
+    ServerThread parent;
+    public BitcoinAsyncTask(int port, ServerThread parent) {
         this.port = port;
-        this.currency = currency;
+        this.parent = parent;
     }
 
     @Override
@@ -40,6 +40,7 @@ public class BitcoinAsyncTask extends AsyncTask<String, Void, String> {
     public void onPostExecute(String content) {
         //String prevText = tvOutDisplay.getText().toString();
         Log.d(Constants.TAG, "Got response: " + content);
+        parent.ParseResult(content);
         //tvOutDisplay.setText(prevText + "\n" + content);
     }
 }
